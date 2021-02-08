@@ -7,5 +7,7 @@
     "**/.DS_Store": true,
     "**/[Bb]in": true,
     "**/[Oo]bj": true
-  }
+  },
+  "workbench.editor.decorations.colors": true,
+  "workbench.editor.decorations.badges": true
 }

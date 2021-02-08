@@ -7,6 +7,8 @@ using Microsoft.Extensions.Options;
 using Microsoft.OpenApi.Models;
 using src.Catalog.Catalog.API.Data;
 using src.Catalog.Catalog.API.Entities.Settings;
+using src.Catalog.Catalog.API.Repositories;
+using src.Catalog.Catalog.API.Repositories.Interfaces;
 
 namespace Catalog.API
 {
@@ -26,6 +28,7 @@ namespace Catalog.API
       services.Configure<CatalogDatabaseSettings>(Configuration.GetSection(nameof(CatalogDatabaseSettings)));
       services.AddSingleton<ICatalogDatabaseSettings>(sp => sp.GetRequiredService<IOptions<CatalogDatabaseSettings>>().Value);
       services.AddScoped<ICatalogContext, CatalogContext>();
+      services.AddScoped<IProductRepository, ProductRepository>();
       services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Catalog.API", Version = "v1" }));
     }
 
