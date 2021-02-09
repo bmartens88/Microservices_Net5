@@ -8,7 +8,10 @@ using src.Basket.Basket.API.Data;
 using src.Basket.Basket.API.Data.Interfaces;
 using src.Basket.Basket.API.Repositories;
 using src.Basket.Basket.API.Repositories.Interfaces;
+using src.Common.EventBusRabbitMQ;
 using StackExchange.Redis;
+using RabbitMQ.Client;
+using src.Common.EventBusRabbitMQ.Producer;
 
 namespace Basket.API
 {
@@ -31,8 +34,29 @@ namespace Basket.API
       });
       services.AddScoped<IBasketContext, BasketContext>();
       services.AddScoped<IBasketRepository, BasketRepository>();
+      services.AddAutoMapper(typeof(Startup));
       services.AddControllers();
       services.AddSwaggerGen(c => c.SwaggerDoc("v1", new OpenApiInfo { Title = "Basket.API", Version = "v1" }));
+      services.AddSingleton<IRabbitMQConnection>(_ =>
+      {
+        var factory = new ConnectionFactory()
+        {
+          HostName = Configuration["EventBus:HostName"]
+        };
+
+        if (!string.IsNullOrEmpty(Configuration["EventBus:UserName"]))
+        {
+          factory.UserName = Configuration["EventBus:UserName"];
+        }
+
+        if (!string.IsNullOrEmpty(Configuration["EventBus:Password"]))
+        {
+          factory.Password = Configuration["EventBus:Password"];
+        }
+
+        return new RabbitMQConnection(factory);
+      });
+      services.AddSingleton<EventBusRabbitMQProducer>();
     }
 
     // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
